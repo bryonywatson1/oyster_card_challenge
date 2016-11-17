@@ -17,6 +17,18 @@ describe OysterCard do
 
   context "journey" do
     let(:entry_station) {double :entry_station}
+    let(:exit_station) {double :exit_station}
+
+    it "has an empty journey history by default" do
+      expect(oystercard.journey_history).to eq ([])
+    end
+
+    it "remembers one journey" do
+      oystercard.top_up(1)
+      oystercard.touch_in(:entry_station)
+      oystercard.touch_out(:exit_station)
+      expect(oystercard.journey_history).to eq ([{:entry_station=>:exit_station}])
+    end
 
     describe "#touch_in" do
     it "changes in_use to true when touched in" do
@@ -39,25 +51,28 @@ describe OysterCard do
   end
 
     describe "#touch_out" do
+
       it "changes in_use to false when touched out" do
         oystercard.top_up(1)
         oystercard.touch_in(:entry_station)
-        oystercard.touch_out
+        oystercard.touch_out(:exit_station)
         expect(oystercard.in_journey?).to eq false
       end
 
       it "deducts a fare on completion of a journey" do
         oystercard.top_up(10)
         oystercard.touch_in(:entry_station)
-        expect {oystercard.touch_out}.to change{oystercard.balance}.by(-OysterCard::MINIMUM_FARE)
+        expect {oystercard.touch_out(:exit_station)}.to change{oystercard.balance}.by(-OysterCard::MINIMUM_FARE)
       end
 
       it "forgets entry station on touch out" do
         oystercard.top_up(1)
         oystercard.touch_in(:entry_station)
-        oystercard.touch_out
+        oystercard.touch_out(:exit_station)
         expect(oystercard.entry_station).to eq nil
       end
+
+      it { is_expected.to respond_to(:touch_out).with(1).argument }
 
     end
   end

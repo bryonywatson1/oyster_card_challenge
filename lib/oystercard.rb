@@ -2,11 +2,12 @@ class OysterCard
   MAXIMUM_LIMIT = 90
   MINIMUM_LIMIT = 1
   MINIMUM_FARE = 1
-  attr_accessor :balance, :entry_station
+  attr_reader :balance, :entry_station, :journey_history
 
   def initialize
     @balance = 0
     @entry_station = nil
+    @journey_history = []
   end
 
   def top_up(value)
@@ -20,8 +21,9 @@ class OysterCard
     self.entry_station = entry_station
   end
 
-  def touch_out
+  def touch_out(exit_station)
     deduct(MINIMUM_FARE)
+    self.journey_history << {entry_station=>exit_station}
     self.entry_station = nil
   end
 
@@ -30,6 +32,8 @@ class OysterCard
   end
 
   private
+
+  attr_writer :balance, :entry_station, :journey_history
 
   def limit_exceeded?(value)
     self.balance + value > MAXIMUM_LIMIT
