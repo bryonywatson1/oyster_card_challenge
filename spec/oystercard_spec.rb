@@ -31,43 +31,44 @@ describe OysterCard do
     end
 
     describe "#touch_in" do
-    it "changes in_use to true when touched in" do
-      oystercard.top_up(1)
-      oystercard.touch_in(:entry_station)
-      expect(oystercard.in_journey?).to eq true
-    end
 
-    it "refuses to let you touch in unless the balance is at least £#{OysterCard::MINIMUM_LIMIT}" do
-      message = "Error: Insufficient balance, please top up."
-      expect {oystercard.touch_in(:entry_station)}.to raise_error(message)
-    end
+      it "refuses to let you touch in unless the balance is at least £#{OysterCard::MINIMUM_LIMIT}" do
+        message = "Error: Insufficient balance, please top up."
+        expect {oystercard.touch_in(:entry_station)}.to raise_error(message)
+      end
 
-    it "remembers the entry station after touch in" do
-      oystercard.top_up(1)
-      oystercard.touch_in(:entry_station)
-      expect(oystercard.entry_station).not_to eq nil
-    end
+      it "changes in_use to true when touched in" do
+        oystercard.top_up(1)
+        oystercard.touch_in(:entry_station)
+        expect(oystercard.in_journey?).to eq true
+      end
 
-  end
+
+      it "remembers the entry station after touch in" do
+        oystercard.top_up(1)
+        oystercard.touch_in(:entry_station)
+        expect(oystercard.entry_station).not_to eq nil
+      end
+
+    end
 
     describe "#touch_out" do
 
-      it "changes in_use to false when touched out" do
+      before do
         oystercard.top_up(1)
         oystercard.touch_in(:entry_station)
+      end
+
+      it "changes in_use to false when touched out" do
         oystercard.touch_out(:exit_station)
         expect(oystercard.in_journey?).to eq false
       end
 
       it "deducts a fare on completion of a journey" do
-        oystercard.top_up(10)
-        oystercard.touch_in(:entry_station)
         expect {oystercard.touch_out(:exit_station)}.to change{oystercard.balance}.by(-OysterCard::MINIMUM_FARE)
       end
 
       it "forgets entry station on touch out" do
-        oystercard.top_up(1)
-        oystercard.touch_in(:entry_station)
         oystercard.touch_out(:exit_station)
         expect(oystercard.entry_station).to eq nil
       end
