@@ -20,15 +20,12 @@ class OysterCard
 
   def touch_in(entry_station)
     raise "Error: Insufficient balance, please top up." if insufficient_funds?
-    if journey_klass.ongoing?
-      deduct(PENALTY_FARE)
-      journey_klass.register_entry_station(nil)
-    end
+    journey_klass.ongoing? ? deduct(PENALTY_FARE) : journey_klass.register_entry_station(nil)
     journey_klass.register_entry_station(entry_station)
   end
 
   def touch_out(exit_station)
-    deduct(MINIMUM_FARE)
+    journey_klass.ongoing? ? deduct(MINIMUM_FARE) : deduct(PENALTY_FARE)
     journey_klass.register_journey(exit_station)
   end
 

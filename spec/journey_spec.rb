@@ -24,8 +24,4 @@ let(:entry_station) {double :entry_station}
     journey.forget_entry_station
     expect(journey.ongoing?).to eq false
   end
-
-#  if entry_station != nil then deduct 6 and {entry_Station=>nil}
-
-
 end

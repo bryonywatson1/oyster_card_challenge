@@ -27,7 +27,7 @@ describe OysterCard do
       end
     end
 
-    it "checks if user forgot to touch out" do
+    it "charges penalty fare if user forgot to touch out" do
       oystercard.top_up(10)
       oystercard.touch_in(:entry_station)
       expect{oystercard.touch_in(:entry_station)}.to change{oystercard.balance}.by(-OysterCard::PENALTY_FARE)
@@ -35,13 +35,15 @@ describe OysterCard do
 
     describe "#touch_out" do
 
-      before do
-        oystercard.top_up(1)
+      it "deducts a fare on completion of a journey" do
+        oystercard.top_up(10)
         oystercard.touch_in(:entry_station)
+        expect {oystercard.touch_out(:exit_station)}.to change{oystercard.balance}.by(-OysterCard::MINIMUM_FARE)
       end
 
-      it "deducts a fare on completion of a journey" do
-        expect {oystercard.touch_out(:exit_station)}.to change{oystercard.balance}.by(-OysterCard::MINIMUM_FARE)
+      it "charges penalty fare if user forgot to touch in" do
+        oystercard.top_up(10)
+        expect{oystercard.touch_out(:exit_station)}.to change{oystercard.balance}.by(-OysterCard::PENALTY_FARE)
       end
     end
   end
