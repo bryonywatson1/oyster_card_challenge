@@ -3,8 +3,7 @@ require_relative './journey'
 class OysterCard
   MAXIMUM_LIMIT = 90
   MINIMUM_LIMIT = 1
-  MINIMUM_FARE = 1
-  PENALTY_FARE = 6
+
   attr_reader :balance, :journey_klass
 
   def initialize(journey)
@@ -26,8 +25,10 @@ class OysterCard
 
   def touch_out(exit_station)
     journey_klass.ongoing? ? deduct(MINIMUM_FARE) : deduct(PENALTY_FARE)
-    journey_klass.register_journey(exit_station)
+    journey_klass.register_exit_station(exit_station)
   end
+
+
 
   private
 
