@@ -24,6 +24,7 @@ class Journey
 
   def register_exit_station(station)
     self.exit_station = station
+    self
   end
 
   def forget_entry_station

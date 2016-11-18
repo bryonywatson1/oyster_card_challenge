@@ -16,8 +16,8 @@ describe JourneyLog do
     expect(journey_log.current_journey).to eq journey_log.journeys.last
   end
 
-  xit "should start a new journey if journey is complete" do
-
+  it "should start a new journey if journey is complete" do
+    expect(journey_log.current_journey).to be_an_instance_of Journey
   end
 
   it "should have a finish method" do
@@ -30,4 +30,11 @@ describe JourneyLog do
     expect(journey_log.journeys.last).to be_complete
   end
 
+  it "should return a list of all previous journeys" do
+    journey_log.start(entry_station)
+    journey_log.finish(exit_station)
+    journey_log.start(entry_station)
+    journey_log.finish(exit_station)
+    expect(journey_log.journeys.length).to eq 2
+  end
 end
